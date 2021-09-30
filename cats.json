@@ -1,0 +1,166 @@
+{
+  "data": [
+    {
+    "id":1,
+    "Information":
+    {
+      "Name":"DNS Compromise",
+      "Description":" Altering DNS records resulting in improper redirection."
+    }
+  },
+    {
+    "id": 2,
+    "Information": {
+      "Name":"DNS Poisoning",
+      "Description":"Falsifying domain server cache (cache poisoning)."
+    }
+  },
+    {
+    "id": 3,
+    "Information": {
+      "Name": "Fraud Orders",
+      "Description": "Fraudulent orders."
+    }
+  },
+    {
+    "id": 4,
+    "Information": {
+      "Name": "DDoS Attack",
+      "Description": "Participating in distributed denial-of-service (usually part of botnet)."
+    }
+  },
+    {
+    "id": 5,
+    "Information": {
+      "Name": "FTP Brute-Force",
+      "Description": "FTP Brute-Force"
+    }
+  },
+    {
+    "id": 6,
+    "Information":
+  {
+    "Name": "Ping of Death",
+    "Description": "Oversized IP packet."
+  }
+},
+    {
+    "id": 7,
+    "Information": {
+      "Name": "Phishing",
+      "Description": "Phishing websites and/or email."
+    }
+  },
+    {
+    "id": 8,
+    "Information": {
+      "Name": "Fraud VoIP",
+      "Description": "Fraud VoIP"
+    }
+  },
+    {"id": 9,
+    "Information": {
+      "Name":"Open Proxy", "Description":"Open proxy, open relay, or Tor exit node."
+      }
+  },
+    {
+    "id": 10,
+    "Information":
+    {
+      "Description": "Web Spam",
+      "Name": "Comment/forum, spam, HTTP=referer spam, or other CMS spam."
+    }
+  },
+    {
+    "id": 11,
+    "Information": {
+      "Name": "Email Spam",
+      "Description": "Spam email content, infected attachments, and phishing emails. Note: Limit comments to only relevent information (instead of log dumps) and be sure to remove PII if you want to remain anonymous."
+    }
+  },
+    {
+    "id": 12,
+    "Information": {
+      "Name": "Blog Spam",
+      "Description": "CMS blog comment spam."
+    }
+  },
+    {
+    "id": 13,
+    "Information": {
+      "Name": "VPN",
+      "Description": "IP Conjunctive category."
+    }
+  },
+    {
+    "id": 14,
+    "Information": {
+      "Name": "Port Scan",
+      "Description": "Scanning for open ports and vulnerable services."
+    }
+  },
+    {
+    "id": 15,
+    "Information": {
+      "Name": "Hacking",
+      "Description": "Basic Category"
+    }
+  },
+    {
+    "id": 16,
+    "Information": {
+      "Name": "SQL Injection",
+      "Description": "Attempts at SQL injection."
+    }
+  },
+    {
+    "id": 17,
+    "Information": {
+      "Name": "Spoofing",
+      "Description": "Email sender spoofing."
+    }
+  },
+    {
+    "id": 18,
+    "Information": {
+      "Name": "Brute-Force",
+      "Description": "Credential brute-force attacks on webpage logins and services like SSH, FTP, SIP, SMTP, RDP, etc. This category is separate from DDoS attacks."
+    }
+  },
+    {
+    "id": 19,
+    "Information": {
+      "Name": "Bad Web Bot",
+      "Description": "Webpage scraping (for email addresses, content, etc) and crawlers that do not honor robots.txt. Excessive requests and user agent spoofing can also be reported here."
+    }
+  },
+    {
+    "id": 20,
+    "Information": {
+      "Name": "Exploited Host",
+      "Description": "Host is likely infected with malware and being used for other attacks or to host malicious content. The host owner may not be aware of the compromise. This category is often used in combination with other attack categories."
+    }
+  },
+    {
+    "id": 21,
+    "Information": {
+      "Name": "Web App Attack",
+      "Description": "Attempts to probe for or exploit installed web applications such as a CMS like WordPress/Drupal, e-commerce solutions, forum software, phpMyAdmin and various other software plugins/solutions."
+    }
+  },
+    {
+    "id": 22,
+    "Information": {
+      "Name": "SSH",
+      "Description": "Secure Shell (SSH) abuse. Use this category in combination with more specific categories."
+    }
+  },
+    {
+    "id": 23,
+    "Information": {
+      "Name": "IoT Targeted",
+      "Description": "Abuse was targeted at an 'Internet of Things' type device. Include information about what type of device was targeted in the comments."
+    }
+  }
+  ]
+}
