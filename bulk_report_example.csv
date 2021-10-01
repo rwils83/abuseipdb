@@ -1,0 +1,2 @@
+IP,Categories,ReportDate,Comment
+<ip>, <comma_separated_list_of_categories>, <YYYY-MM-DDTHH:MM:SS>, "Comment from logs, etc"

@@ -66,17 +66,63 @@ def report_endpoint(base_url, ip, cats, comment, cat_file):
               }
 
 
-
-def bulk_report_endpoint(base_url, ip):
-    pass
+def bulk_report_endpoint(base_url, csv_file):
+    url = base_url+"/bulk-report"
+    files = {
+        'csv': (csv_file, open(csv_file, 'rb'))
+    }
+    headers = {
+        'Accept': 'application/json',
+        'Key': config['api-key']
+    }
+    r = requests.post(url=url, headers=headers, files=files)
+    if r.status_code != 200:
+        return "Bulk Report Failed"
+    else:
+        return f"Successfully reported {r.json()['data']['savedReports']}"
 
 
 def check_block_endpoint(base_url, ip):
-    pass
+    url = base_url+"/check-block"
+    if "/" not in ip:
+        return "Please use CIDR notation for block. Use -h for example"
+    querystring = {
+        'network':ip,
+        'maxAgeInDays':"30"
+    }
+    headers = {
+        'Accept': 'application/json',
+        'Key':config['api-key']
+    }
+    r = requests.get(
+        url=url,
+        headers=headers,
+        params=querystring
+    )
+    print(r.status_code)
+    if r.status_code == 402:
+        return "Please review help file for max block. API returned Payment Required"
+    else:
+        response = r.json()
+        file = f'reported_for_netblock_{ip.replace("/", "_")}.txt'
+        with open(file, 'w') as f:
+            f.write(f"Network Address: {response['data']['networkAddress']}\nNetmask: {response['data']['netmask']}\nReported Address:\n")
+            for line in response['data']['reportedAddress']:
+                f.write(f'_____________________\nAddress: {line["ipAddress"]}\nLast Reported: {line["mostRecentReport"].split("T")[0]}\nAbuse Confidence: {line["abuseConfidenceScore"]}\nCountry: {line["countryCode"]}\n')
+        return f"[+] Complete. View {file} for report."
 
 
 def clear_address_endpoint(base_url, ip):
-    pass
+    url = base_url+"/clear-address"
+    querystring = {
+        'ipAddress': ip
+    }
+    headers = {
+        'Accept': 'application/json',
+        'Key': config['api-key']
+    }
+    r = requests.get(url=url, headers=headers, params=querystring)
+    return r.content
 
 
 def display_categories():
@@ -88,44 +134,47 @@ def display_categories():
 
 
 def parse_args():
-    description = "AbuseIPDB API Shim"
+    description = "AbuseIPDB API Shim. Examples mentioned is future release feature."
     parser = argparse.ArgumentParser(description=description)
 
     parser.add_argument(
         "-c",
         "--check-endpoint",
         action="store_true",
-        help= "Check single IP address using the check endpoint"
+        help="Check single IP address using the check endpoint. Use with -f/--file to "
+             "check multiple IPs from a line separated list. use --examples -check for examples on use."
     )
     parser.add_argument(
         "-b",
         "--blacklist-endpoint",
         action="store_true",
-        help="Blacklist Endpoint"
+        help="Blacklist Endpoint. Generate a blacklist. Defaults to 90 Confidence or better and 1000 IPs. "
+             "Based on subscription. use --examples -blacklist for examples on use"
     )
     parser.add_argument(
         "-r",
         "--report-endpoint",
         action="store_true",
-        help="Report Endpoint"
+        help="Report Endpoint. Use to report IPs. Use --examples -report for examples on use"
     )
     parser.add_argument(
         "-cb",
         "--check-block-endpoint",
         action="store_true",
-        help="Check-block endpoint"
+        help="Check-block endpoint. Use to check network block. use --examples -check-block for examples on use"
     )
     parser.add_argument(
         "-br",
         "--bulk-report-endpoint",
         action="store_true",
-        help="Bulk Report Endpoint"
+        help="Bulk Report Endpoint. Use to submit a csv file of IPs, "
+             "see bulk_report_example.csv for structure. Not tested"
     )
     parser.add_argument(
         "-ca",
         "--clear-address-endpoint",
         action="store_true",
-        help="Clear Address Endpoint")
+        help="Clear Address Endpoint. Use for blah. Use --examples -clear for examples on use")
     parser.add_argument(
         "-f",
         "--file",
@@ -150,7 +199,7 @@ def parse_args():
         "--output",
         action="store_true",
         default=False,
-        help="Write to file"
+        help="Write to file. Does not use custom names, writes file to <report_for_ip.txt>"
     )
     parser.add_argument(
         "-do",
@@ -165,14 +214,22 @@ def parse_args():
         nargs="?",
         default="15",
         help="Use comma seperated list of category IDs. Run app with -do/--display-category-options "
-             "to get list of options. To load from list, use -catf/--category-file instead"
+             "to get list of options. To load from list, use -catf/--category-file instead. use --examples -category"
+             "for examples on use"
     )
     parser.add_argument(
         "-catf",
         "--category-file",
         action="store",
         default=None,
-        help="Load a line seperated list of categories to report IP with"
+        help="Load a line seperated list of categories to report IPs with."
+    )
+    parser.add_argument(
+        "-sn",
+        "--net-block",
+        action="store",
+        help="Enter a subnet block with CIDR notation, ie 10.0.0.0/24. "
+             "\nFree plan max is /24, basic Subscription is /20, premium is /16."
     )
 
     args = parser.parse_args()
@@ -216,10 +273,16 @@ if __name__ == "__main__":
             cat_file=args.category_file
         )
     if args.check_block_endpoint:
-        pass
+        print("[+] Checking Subnet block, this may take a few minutes.")
+        print(check_block_endpoint(
+            base_url=config['base-url'],
+            ip=args.net_block
+        ))
     if args.bulk_report_endpoint:
-        pass
+        print(bulk_report_endpoint(
+            base_url=config['base-url'],
+            csv_file=args.bulk_report_file))
     if args.clear_address_endpoint:
-        pass
+        print(clear_address_endpoint(base_url=config['base-url'], ip=args.ip))
     if args.display_category_options:
         display_categories()
