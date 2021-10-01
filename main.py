@@ -18,7 +18,7 @@ def check_endpoint(base_url, ip, write_to_file, bulk_write, file=None):
         'Accept': 'application/json',
         'Key': config['api-key']
     }
-    r = requests.get(url=url+"/check", headers=headers, params=querystring)
+    r = requests.get(url=url + "/check", headers=headers, params=querystring)
     response = r.json()['data']
     display = f"Report for {ip}\n_________________\nLast Reported: {response['lastReportedAt'].split('T')[0]}\nPublic IP: {response['isPublic']}\nAbuse Confidence: {response['abuseConfidenceScore']}%\nCountry: {response['countryCode']}\nTotal Reports: {response['totalReports']}"
     if write_to_file:
@@ -26,16 +26,16 @@ def check_endpoint(base_url, ip, write_to_file, bulk_write, file=None):
             with open(f"report_for_{ip.replace('.', '_')}.txt", 'w+') as f:
                 f.write(display.strip())
         else:
-            file = file.replace('\\', '').replace('.','_')
+            file = file.replace('\\', '').replace('.', '_')
             with open(f'consolidated_report_for_{file}.txt', 'a') as f:
-                f.write(display.strip()+"\n")
+                f.write(display.strip() + "\n")
     else:
         return display
 
 
-def blacklist_endpoint(base_url, confidenceRating="90"):
-    url = base_url+"/blacklist"
-    querystring = {'confidenceMinimum': confidenceRating,
+def blacklist_endpoint(base_url, confidence_rating="90"):
+    url = base_url + "/blacklist"
+    querystring = {'confidenceMinimum': confidence_rating,
                    'limit': '9999999'}
     headers = {
         "Accept": 'application/json',
@@ -45,13 +45,13 @@ def blacklist_endpoint(base_url, confidenceRating="90"):
     response = r.json()['data']
     with open(f"Black_List_created_{r.json()['meta']['generatedAt'].split('T')[0]}", "w+") as f:
         for entry in response:
-            f.write(entry['ipAddress']+"\n")
+            f.write(entry['ipAddress'] + "\n")
     print("Generated Blacklist")
 
 
 def report_endpoint(base_url, ip, cats, comment, cat_file):
     cat_list = []
-    url = base_url+"/report"
+    url = base_url + "/report"
     if cat_file is not None:
         with open(cat_file, 'r') as f:
             for line in f.readlines():
@@ -63,11 +63,11 @@ def report_endpoint(base_url, ip, cats, comment, cat_file):
         "ip": ip,
         'categories': ",".join(cat_list),
         'comment': comment
-              }
+    }
 
 
 def bulk_report_endpoint(base_url, csv_file):
-    url = base_url+"/bulk-report"
+    url = base_url + "/bulk-report"
     files = {
         'csv': (csv_file, open(csv_file, 'rb'))
     }
@@ -83,16 +83,16 @@ def bulk_report_endpoint(base_url, csv_file):
 
 
 def check_block_endpoint(base_url, ip):
-    url = base_url+"/check-block"
+    url = base_url + "/check-block"
     if "/" not in ip:
         return "Please use CIDR notation for block. Use -h for example"
     querystring = {
-        'network':ip,
-        'maxAgeInDays':"30"
+        'network': ip,
+        'maxAgeInDays': "30"
     }
     headers = {
         'Accept': 'application/json',
-        'Key':config['api-key']
+        'Key': config['api-key']
     }
     r = requests.get(
         url=url,
@@ -106,14 +106,19 @@ def check_block_endpoint(base_url, ip):
         response = r.json()
         file = f'reported_for_netblock_{ip.replace("/", "_")}.txt'
         with open(file, 'w') as f:
-            f.write(f"Network Address: {response['data']['networkAddress']}\nNetmask: {response['data']['netmask']}\nReported Address:\n")
-            for line in response['data']['reportedAddress']:
-                f.write(f'_____________________\nAddress: {line["ipAddress"]}\nLast Reported: {line["mostRecentReport"].split("T")[0]}\nAbuse Confidence: {line["abuseConfidenceScore"]}\nCountry: {line["countryCode"]}\n')
+            f.write(f"Network Address: {response['data']['networkAddress']}\n"
+                    f"Netmask: {response['data']['netmask']}\nReported Address:\n")  # Splits for pep8 compliance
+            for line in response['data']['reportedAddress']:                         # \n still required
+                f.write(f'_____________________\n'
+                        f'Address: {line["ipAddress"]}\n'
+                        f'Last Reported: {line["mostRecentReport"].split("T")[0]}\n'
+                        f'Abuse Confidence: {line["abuseConfidenceScore"]}\n'
+                        f'Country: {line["countryCode"]}\n')  # Splits for pep8 compliance, \n still required
         return f"[+] Complete. View {file} for report."
 
 
 def clear_address_endpoint(base_url, ip):
-    url = base_url+"/clear-address"
+    url = base_url + "/clear-address"
     querystring = {
         'ipAddress': ip
     }
@@ -130,7 +135,8 @@ def display_categories():
     with open('cats.json', 'r') as f:
         cats.update(json.load(f))
     for category in cats['data']:
-        print(f'Category ID: {category["id"]}\nCategory Name: {category["Information"]["Name"]}\nCategory Description: {category["Information"]["Description"]}')
+        print(
+            f'Category ID: {category["id"]}\nCategory Name: {category["Information"]["Name"]}\nCategory Description: {category["Information"]["Description"]}')
 
 
 def parse_args():
@@ -262,7 +268,7 @@ if __name__ == "__main__":
     if args.blacklist_endpoint:
         blacklist_endpoint(
             config['base-url'],
-            confidenceRating=str(args.confidence_rating)
+            confidence_rating=str(args.confidence_rating)
         )
     if args.report_endpoint:
         report_endpoint(
